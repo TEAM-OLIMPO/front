@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Marcough - Asistente de Riesgo Respiratorio</title>
+    <meta name="description" content="Marcough es una herramienta de tamizaje y prevención respiratoria. Analiza tu tos y síntomas para obtener recomendaciones preventivas. No es un diagnóstico médico." />
+    <meta name="author" content="Marcough" />
+    <meta name="theme-color" content="#0d9488" />
+
+    <meta property="og:title" content="Marcough - Asistente de Riesgo Respiratorio" />
+    <meta property="og:description" content="Prevención que se escucha. Analiza tu tos y síntomas para obtener recomendaciones preventivas." />
+    <meta property="og:type" content="website" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Marcough - Asistente de Riesgo Respiratorio" />
+    <meta name="twitter:description" content="Prevención que se escucha. Herramienta de tamizaje respiratorio." />
+
+    <!-- Mobile web app -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Marcough" />
+    <script type="module" crossorigin src="/assets/index-DeJpyGF6.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-i0WVz12a.css">
+  </head>
+
+  <body>
+    <div id="root"></div>
+
+    <!-- Input y botón para subir audio -->
+    <input type="file" id="audioFile" accept="audio/*" />
+    <button id="uploadBtn">Enviar</button>
+
+    <!-- Script de envío a FastAPI -->
+    <script>
+      document.getElementById("uploadBtn").addEventListener("click", () => {
+        const fileInput = document.getElementById("audioFile");
+        if (!fileInput.files.length) {
+          alert("Selecciona un archivo primero");
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", fileInput.files[0]);
+
+        fetch("http://localhost:8000/predict", {
+          method: "POST",
+          body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+          console.log("Predicción:", data.prediction);
+          console.log("Confianza:", data.confidence);
+          alert(`Predicción: ${data.prediction}\nConfianza: ${data.confidence.toFixed(2)}`);
+        })
+        .catch(err => console.error(err));
+      });
+    </script>
+
+    
+  </body>
+</html>
